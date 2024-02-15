@@ -103,6 +103,7 @@ class Node:
         if node.visits == 0:
             return float("inf")
         average_value = node.sum_value / node.visits
+        assert node.parent != None
         exploration_value = exploration_param * sqrt(
             (log(node.parent.visits) / node.visits)
         )
