@@ -27,7 +27,6 @@ class MonteCarloTreeSearch:
                 else:
                     result = leaf_node.rollout()
                     leaf_node.backpropagate(result)
-        print(max(self.root.children, key=lambda x: x.visits).visits)
         return max(self.root.children, key=lambda x: x.visits)
 
     def traverse_tree(self):
@@ -103,8 +102,7 @@ class Node:
         if node.visits == 0:
             return -float("inf") if node.state.player1_turn else float("inf")
         average_value = node.sum_value / node.visits
-        # print(average_value)
-        #assert node.parent != None
+        assert node.parent != None
         exploration_value = exploration_param * sqrt(
             (log(node.parent.visits) / (1 + node.visits))
         )
