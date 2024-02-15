@@ -34,7 +34,7 @@ class Nim(State):
         return False
 
     def get_result(self):
-        return -1 if not self.player1_turn else 1
+        return 1 if not self.player1_turn else -1
 
     def __repr__(self):
         return f"State({self.stones}, {self.player1_turn})"
