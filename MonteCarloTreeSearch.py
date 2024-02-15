@@ -101,13 +101,14 @@ class Node:
     def UCB1(self, node: Node, exploration_param: float):
         # Calculating the value of the UCB for a node
         if node.visits == 0:
-            return float("inf")
+            return -float("inf") if node.state.player1_turn else float("inf")
         average_value = node.sum_value / node.visits
-        assert node.parent != None
+        # print(average_value)
+        #assert node.parent != None
         exploration_value = exploration_param * sqrt(
-            (log(node.parent.visits) / node.visits)
+            (log(node.parent.visits) / (1 + node.visits))
         )
-        if node.state.player1_turn:
+        if not node.state.player1_turn:
             return average_value + exploration_value
         else:
             return average_value - exploration_value
