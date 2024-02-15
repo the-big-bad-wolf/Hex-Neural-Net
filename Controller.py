@@ -1,11 +1,21 @@
-from Nim import Nim
+from Hex import Hex, Player
 from MonteCarloTreeSearch import Node, MonteCarloTreeSearch
-import random
+
+# import random
 
 # random.seed(123)
 
-Nim = Nim(10, 5, True)
-MCTS = MonteCarloTreeSearch(1, Node(Nim, None))
+board: list[list[Player]] = []
+
+for i in range(5):
+    row: list[Player] = []
+    for j in range(5):
+        row.append(Player.EMPTY)
+    board.append(row)
+
+
+Hex = Hex(board, True)
+MCTS = MonteCarloTreeSearch(1, Node(Hex, None))
 
 best_node = MCTS.search(500)
-print(best_node.state)
+best_node.state.visualize()
