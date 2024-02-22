@@ -1,12 +1,18 @@
 from __future__ import annotations
 from math import log, sqrt
 from State import State
+from NeuralNet import NeuralNet
+import torch
 import random
 
 
 class MonteCarloTreeSearch:
-    def __init__(self, exploration_param: float, root: Node):
+    def __init__(
+        self, exploration_param: float, root: Node, ANET: NeuralNet, episolon: float
+    ):
+        self.ANET = ANET
         self.root = root
+        self.episolon = episolon
         self.exploration_param = exploration_param
 
     def search(self, num_iterations: int):
@@ -15,7 +21,7 @@ class MonteCarloTreeSearch:
             leaf_node = self.traverse_tree()
 
             if leaf_node.visits == 0:
-                result = leaf_node.rollout()
+                result = leaf_node.rollout(self.ANET)
                 leaf_node.backpropagate(result)
             else:
                 leaf_node.node_expansion()
@@ -79,11 +85,19 @@ class Node:
 
             return best_child
 
-    def rollout(self):
+    def rollout(self, ANET: NeuralNet):
         # Simulating a random game from the state of a node to a terminal state
         current_state = self.state
         while not current_state.is_terminal():
+            distribution = ANET.forward(torch.tensor(current_state.get_state()))
             legal_actions = current_state.get_legal_actions()
+            distribution.reshape(len(current_state.board), len(current_state.board))
+            for action in legal_actions:
+                for i in range(len(distribution)):
+                    for j in range(len(distribution[i])):
+                        if (i, j) not in legal_actions:
+                            distribution[action[0]][action[1]] = 0
+
             random_index = random.randint(0, len(legal_actions) - 1)
             random_action = legal_actions[random_index]
             current_state = current_state.take_action(random_action)

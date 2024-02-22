@@ -4,12 +4,17 @@ from typing import Tuple
 
 
 class State(ABC):
-    def __init__(self):
-        self.board = None
+    def __init__(self, board):
+        self.board: list
         self.player1_turn: bool
 
     @abstractmethod
     def get_legal_actions(self) -> list[Tuple[int, int]]:
+        # Returning a list of legal actions from the current state
+        pass
+
+    @abstractmethod
+    def get_state(self) -> list:
         # Returning a list of legal actions from the current state
         pass
 

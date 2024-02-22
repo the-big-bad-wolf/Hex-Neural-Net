@@ -25,6 +25,13 @@ class Hex(State):
                     actions.append((i, j))
         return actions
 
+    def get_state(self):
+        flattened_board = [cell.value for row in self.board for cell in row]
+        if self.player1_turn:
+            return flattened_board + [1]
+        else:
+            return flattened_board + [0]
+
     def take_action(self, action: Tuple[int, int]):
         i, j = action
         new_board = copy.deepcopy(self.board)
