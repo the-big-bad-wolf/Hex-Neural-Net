@@ -12,6 +12,11 @@ class Controller:
         self.ANET = ANET
         self.RBUF = []
 
+    def run(self, nr_episodes: int):
+        for _ in range(nr_episodes):
+            self.run_episode()
+            self.ANET.train(self.RBUF)
+
     def run_episode(self):
         while not self.MCTS.root.state.is_terminal():
             self.MCTS.root.state.visualize()
