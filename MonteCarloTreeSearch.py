@@ -8,17 +8,23 @@ import random
 
 class MonteCarloTreeSearch:
     def __init__(
-        self, exploration_param: float, root: Node, ANET: NeuralNet, epsilon: float
+        self,
+        exploration_param: float,
+        root: Node,
+        ANET: NeuralNet,
+        epsilon: float,
+        nr_rollouts: int,
     ):
         self.ANET = ANET
         self.root = root
         self.epsilon = epsilon
         self.exploration_param = exploration_param
+        self.nr_rollouts = nr_rollouts
 
-    def search(self, num_iterations: int):
+    def search(self):
         # Running the Monte Carlo Tree Search algorithm for a number of iterations
         self.root.node_expansion()
-        for _ in range(num_iterations):
+        for _ in range(self.nr_rollouts):
             leaf_node = self.traverse_tree()
 
             if leaf_node.visits == 0:
@@ -45,12 +51,15 @@ class MonteCarloTreeSearch:
 
 
 class Node:
-    def __init__(self, state: State, parent: Node | None):
+    def __init__(
+        self, state: State, parent: Node | None, arcTo: tuple[int, int] | None
+    ):
         self.state = state
         self.parent = parent
         self.children: list[Node] = []
         self.visits = 0
         self.sum_value = 0
+        self.arcTo = arcTo
 
     def is_fully_expanded(self):
         # Checking if all children of a node have been generated
@@ -61,10 +70,12 @@ class Node:
 
     def node_expansion(self):
         # Generating child states of a parent state and connecting parent node to child nodes
+        if self.is_fully_expanded():
+            return
         legal_actions = self.state.get_legal_actions()
         for action in legal_actions:
             child_state = self.state.take_action(action)
-            child_node = Node(child_state, self)
+            child_node = Node(child_state, self, action)
             self.children.append(child_node)
 
     def best_child(self, exploration_param: float):

@@ -16,6 +16,7 @@ from Hex import Hex, Player
 from Nim import Nim
 from NeuralNet import NeuralNet
 from MonteCarloTreeSearch import Node, MonteCarloTreeSearch
+from Controller import Controller
 
 # import random
 
@@ -23,9 +24,9 @@ from MonteCarloTreeSearch import Node, MonteCarloTreeSearch
 
 board: list[list[Player]] = []
 
-for i in range(3):
+for i in range(5):
     row: list[Player] = []
-    for j in range(3):
+    for j in range(5):
         row.append(Player.EMPTY)
     board.append(row)
 
@@ -36,8 +37,8 @@ Nim = Nim(17, 5, True)
 
 NN = NeuralNet(len(board) ** 2 + 1, len(board) ** 2, 2, 5)
 
-MCTS = MonteCarloTreeSearch(1, Node(Hex, None), NN, 1)
+MCTS = MonteCarloTreeSearch(1, Node(Hex, None, None), NN, 1, 1000)
 
-best_node = MCTS.search(10000)
-print(best_node.state.get_state())
-best_node.state.visualize()
+controller = Controller(MCTS, NN)
+
+controller.run_episode()

@@ -134,3 +134,4 @@ def matrix(n: int, m: int, li: list[list[Player]]):
         lst.reverse()
         print(*lst)
         ctr += 1
+    print("\n")
