@@ -11,3 +11,33 @@ def read_parameters_from_yaml(file_path: str):
 file_path = "pivotal_parameters.yaml"
 parameters = read_parameters_from_yaml(file_path)
 print(parameters)
+
+from Hex import Hex, Player
+from Nim import Nim
+from NeuralNet import NeuralNet
+from MonteCarloTreeSearch import Node, MonteCarloTreeSearch
+
+# import random
+
+# random.seed(123)
+
+board: list[list[Player]] = []
+
+for i in range(3):
+    row: list[Player] = []
+    for j in range(3):
+        row.append(Player.EMPTY)
+    board.append(row)
+
+
+Hex = Hex(board, True)
+
+Nim = Nim(17, 5, True)
+
+NN = NeuralNet(len(board) ** 2 + 1, len(board) ** 2, 2, 5)
+
+MCTS = MonteCarloTreeSearch(1, Node(Hex, None), NN, 1)
+
+best_node = MCTS.search(10000)
+print(best_node.state.get_state())
+best_node.state.visualize()

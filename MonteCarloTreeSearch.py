@@ -8,15 +8,16 @@ import random
 
 class MonteCarloTreeSearch:
     def __init__(
-        self, exploration_param: float, root: Node, ANET: NeuralNet, episolon: float
+        self, exploration_param: float, root: Node, ANET: NeuralNet, epsilon: float
     ):
         self.ANET = ANET
         self.root = root
-        self.episolon = episolon
+        self.epsilon = epsilon
         self.exploration_param = exploration_param
 
     def search(self, num_iterations: int):
         # Running the Monte Carlo Tree Search algorithm for a number of iterations
+        self.root.node_expansion()
         for _ in range(num_iterations):
             leaf_node = self.traverse_tree()
 
@@ -28,10 +29,10 @@ class MonteCarloTreeSearch:
                 if len(leaf_node.children) != 0:
                     random_index = random.randint(0, len(leaf_node.children) - 1)
                     random_child = leaf_node.children[random_index]
-                    result = random_child.rollout()
+                    result = random_child.rollout(self.ANET)
                     random_child.backpropagate(result)
                 else:
-                    result = leaf_node.rollout()
+                    result = leaf_node.rollout(self.ANET)
                     leaf_node.backpropagate(result)
         return max(self.root.children, key=lambda x: x.visits)
 
@@ -91,16 +92,25 @@ class Node:
         while not current_state.is_terminal():
             distribution = ANET.forward(torch.tensor(current_state.get_state()))
             legal_actions = current_state.get_legal_actions()
-            distribution.reshape(len(current_state.board), len(current_state.board))
-            for action in legal_actions:
-                for i in range(len(distribution)):
-                    for j in range(len(distribution[i])):
-                        if (i, j) not in legal_actions:
-                            distribution[action[0]][action[1]] = 0
+            distribution = distribution.reshape(
+                len(current_state.board), len(current_state.board)
+            )
 
-            random_index = random.randint(0, len(legal_actions) - 1)
-            random_action = legal_actions[random_index]
-            current_state = current_state.take_action(random_action)
+            for i in range(len(distribution)):
+                for j in range(len(distribution[i])):
+                    if (i, j) not in legal_actions:
+                        distribution[i][j] = float("-inf")
+
+            row, col = divmod(distribution.argmax().item(), distribution.shape[1])
+            current_state = current_state.take_action((int(row), int(col)))
+
+            # current_state = current_state.take_action(
+            #     (
+            #         int(distribution.argmax().item()) + 1,
+            #         int(distribution.argmax().item()) + 1,
+            #     )
+            # )
+
         return current_state.get_result()
 
     def backpropagate(self, result: float):

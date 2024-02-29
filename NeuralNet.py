@@ -41,7 +41,7 @@ class NeuralNet(nn.Module):
             self.output_layer.bias = nn.Parameter(biases[-1])
 
     def forward(self, x: torch.Tensor):
-        x = torch.relu(self.input_layer(x))
+        x = torch.relu(self.input_layer(x.float()))
         for layer in self.hidden:
             x = torch.relu(layer(x))
         x = self.output_layer(x)

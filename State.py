@@ -15,7 +15,7 @@ class State(ABC):
 
     @abstractmethod
     def get_state(self) -> list:
-        # Returning a list of legal actions from the current state
+        # Returning the state of the game
         pass
 
     @abstractmethod
