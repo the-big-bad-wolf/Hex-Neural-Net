@@ -13,8 +13,8 @@ class NeuralNet(nn.Module):
         neurons_per_layer: int,
         activation_function: str,
         optimizer: str,
-        weights=None,
-        biases=None,
+        weights: torch.Tensor | None = None,
+        biases: torch.Tensor | None = None,
     ):
         super(NeuralNet, self).__init__()
 
@@ -94,8 +94,6 @@ class NeuralNet(nn.Module):
 
         optimizer = self.optimizer(self.parameters(), lr=learning_rate)
 
-        print("input_tensor", input_tensor)
-        print("target_tensor", target_tensor)
         for _ in range(epochs):
             losses = []
             optimizer.zero_grad()
