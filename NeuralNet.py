@@ -73,6 +73,7 @@ class NeuralNet(nn.Module):
         for layer in self.hidden:
             x = self.activation_function(layer(x))
         x = self.output_layer(x)
+        x = torch.nn.functional.softmax(x, dim=0)
         return x
 
     def update_params(
@@ -89,19 +90,19 @@ class NeuralNet(nn.Module):
 
         input_tensor = torch.tensor(input)
         target_tensor = torch.tensor(target)
+        target_tensor = target_tensor.flatten(start_dim=1, end_dim=2)
 
         optimizer = self.optimizer(self.parameters(), lr=learning_rate)
 
+        print("input_tensor", input_tensor)
+        print("target_tensor", target_tensor)
         for _ in range(epochs):
             losses = []
-            for i in range(subset_size):
-                optimizer.zero_grad()
-                outputs = self.forward(input_tensor[i])
-                loss = torch.nn.functional.cross_entropy(
-                    outputs, target_tensor[i].flatten()
-                )
-                loss.backward()
-                optimizer.step()
+            optimizer.zero_grad()
+            outputs = self.forward(input_tensor)
+            loss = torch.nn.CrossEntropyLoss()(outputs, target_tensor)
+            loss.backward()
+            losses.append(loss.item())
+            optimizer.step()
 
-                losses.append(loss.item())
             print(f"Loss: {sum(losses) / len(losses)}")
