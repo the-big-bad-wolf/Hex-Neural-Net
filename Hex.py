@@ -18,6 +18,8 @@ class Hex(State):
         self.player1_turn = player1_turn
 
     def get_legal_actions(self):
+        if self.is_terminal():
+            return []
         actions: list[Tuple[int, int]] = []
         for i in range(self.size):
             for j in range(self.size):
