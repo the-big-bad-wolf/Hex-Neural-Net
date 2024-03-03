@@ -1,5 +1,7 @@
 import torch
 import torch.nn as nn
+import torch.optim as optim
+import random
 
 
 class NeuralNet(nn.Module):
@@ -46,3 +48,32 @@ class NeuralNet(nn.Module):
             x = torch.relu(layer(x))
         x = self.output_layer(x)
         return x
+
+    def update_params(
+        self,
+        RBUF: list[tuple[list, list[list[float]]]],
+        subset_size: int,
+        epochs: int,
+        learning_rate: float,
+    ):
+
+        random_subset = random.sample(RBUF, k=subset_size)
+        input = [item[0] for item in random_subset]
+        target = [item[1] for item in random_subset]
+
+        input_tensor = torch.tensor(input)
+        target_tensor = torch.tensor(target)
+
+        optimizer = optim.Adam(self.parameters(), lr=learning_rate)
+
+        for _ in range(epochs):
+            losses = []
+            for i in range(subset_size):
+                optimizer.zero_grad()
+                outputs = self.forward(input_tensor[i])
+                loss = torch.nn.functional.mse_loss(outputs, target_tensor[i].flatten())
+                loss.backward()
+                optimizer.step()
+
+                losses.append(loss.item())
+            print(f"Loss: {sum(losses) / len(losses)}")

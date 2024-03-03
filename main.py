@@ -37,8 +37,8 @@ Nim = Nim(17, 5, True)
 
 NN = NeuralNet(len(board) ** 2 + 1, len(board) ** 2, 2, 5)
 
-MCTS = MonteCarloTreeSearch(1, Node(Hex, None, None), NN, 1, 1000)
+MCTS = MonteCarloTreeSearch(1, Node(Hex, None, None), NN, 1, 10)
 
 controller = Controller(MCTS, NN)
 
-controller.run_episode()
+controller.run(10)

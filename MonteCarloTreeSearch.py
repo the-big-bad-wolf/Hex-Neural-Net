@@ -4,6 +4,7 @@ from State import State
 from NeuralNet import NeuralNet
 import torch
 import random
+import copy
 
 
 class MonteCarloTreeSearch:
@@ -20,6 +21,7 @@ class MonteCarloTreeSearch:
         self.epsilon = epsilon
         self.exploration_param = exploration_param
         self.nr_rollouts = nr_rollouts
+        self.original_root = copy.deepcopy(self.root)
 
     def search(self):
         # Running the Monte Carlo Tree Search algorithm for a number of iterations
@@ -48,6 +50,9 @@ class MonteCarloTreeSearch:
         while current_node.is_fully_expanded() and not current_node.state.is_terminal():
             current_node = current_node.best_child(self.exploration_param)
         return current_node
+
+    def reset_root(self):
+        self.root = copy.deepcopy(self.original_root)
 
 
 class Node:

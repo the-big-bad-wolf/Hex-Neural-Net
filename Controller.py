@@ -7,21 +7,33 @@ class Controller:
         self,
         MCTS: MonteCarloTreeSearch,
         ANET: NeuralNet,
+        RBUF_subset_size: int = 10,
+        learning_rate: float = 0.01,
+        training_epochs: int = 25,
     ):
         self.MCTS = MCTS
         self.ANET = ANET
-        self.RBUF = []
+        self.RBUF: list[tuple[list, list[list[float]]]] = []
+        self.RBUF_subset_size = RBUF_subset_size
+        self.learning_rate = learning_rate
+        self.training_epochs = training_epochs
 
     def run(self, nr_episodes: int):
-        for _ in range(nr_episodes):
+        for i in range(nr_episodes):
+            print(f"Running episode {i}")
             self.run_episode()
-            self.ANET.train(self.RBUF)
+            self.ANET.update_params(
+                self.RBUF,
+                self.RBUF_subset_size,
+                self.training_epochs,
+                self.learning_rate,
+            )
+            self.MCTS.reset_root()
 
     def run_episode(self):
         while not self.MCTS.root.state.is_terminal():
-            self.MCTS.root.state.visualize()
             self.make_move()
-        self.MCTS.root.state.visualize()
+            self.MCTS.root.state.visualize()
 
     def make_move(self):
         new_root = self.MCTS.search()
