@@ -11,6 +11,8 @@ class NeuralNet(nn.Module):
         output_size: int,
         hidden_layers: int,
         neurons_per_layer: int,
+        activation_function: str,
+        optimizer: str,
         weights=None,
         biases=None,
     ):
@@ -20,6 +22,30 @@ class NeuralNet(nn.Module):
         self.output_size = output_size
         self.hidden_layers = hidden_layers
         self.neurons_per_layer = neurons_per_layer
+
+        # Choose the activation function
+        if activation_function == "relu":
+            self.activation_function = torch.relu
+        elif activation_function == "sigmoid":
+            self.activation_function = torch.sigmoid
+        elif activation_function == "tanh":
+            self.activation_function = torch.tanh
+        elif activation_function == "linear":
+            self.activation_function = lambda x: x
+        else:
+            raise ValueError("Activation function not recognized")
+
+        # Choose optimizer
+        if optimizer == "adam":
+            self.optimizer = optim.Adam
+        elif optimizer == "sgd":
+            self.optimizer = optim.SGD
+        elif optimizer == "adagrad":
+            self.optimizer = optim.Adagrad
+        elif optimizer == "RMSPROP":
+            self.optimizer = optim.RMSprop
+        else:
+            raise ValueError("Optimizer not recognized")
 
         # Create the input layer
         self.input_layer = nn.Linear(input_size, neurons_per_layer)
@@ -43,9 +69,9 @@ class NeuralNet(nn.Module):
             self.output_layer.bias = nn.Parameter(biases[-1])
 
     def forward(self, x: torch.Tensor):
-        x = torch.relu(self.input_layer(x.float()))
+        x = self.activation_function(self.input_layer(x.float()))
         for layer in self.hidden:
-            x = torch.relu(layer(x))
+            x = self.activation_function(layer(x))
         x = self.output_layer(x)
         return x
 
@@ -56,7 +82,7 @@ class NeuralNet(nn.Module):
         epochs: int,
         learning_rate: float,
     ):
-
+        subset_size = min(subset_size, len(RBUF))
         random_subset = random.sample(RBUF, k=subset_size)
         input = [item[0] for item in random_subset]
         target = [item[1] for item in random_subset]
@@ -64,14 +90,16 @@ class NeuralNet(nn.Module):
         input_tensor = torch.tensor(input)
         target_tensor = torch.tensor(target)
 
-        optimizer = optim.Adam(self.parameters(), lr=learning_rate)
+        optimizer = self.optimizer(self.parameters(), lr=learning_rate)
 
         for _ in range(epochs):
             losses = []
             for i in range(subset_size):
                 optimizer.zero_grad()
                 outputs = self.forward(input_tensor[i])
-                loss = torch.nn.functional.mse_loss(outputs, target_tensor[i].flatten())
+                loss = torch.nn.functional.cross_entropy(
+                    outputs, target_tensor[i].flatten()
+                )
                 loss.backward()
                 optimizer.step()
 

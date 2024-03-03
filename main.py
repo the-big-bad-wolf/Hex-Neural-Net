@@ -1,44 +1,72 @@
 import yaml
-
-
-def read_parameters_from_yaml(file_path: str):
-    with open(file_path, "r") as file:
-        parameters = yaml.safe_load(file)
-    return parameters
-
-
-# Example usage
-file_path = "pivotal_parameters.yaml"
-parameters = read_parameters_from_yaml(file_path)
-print(parameters)
-
 from Hex import Hex, Player
 from Nim import Nim
 from NeuralNet import NeuralNet
 from MonteCarloTreeSearch import Node, MonteCarloTreeSearch
 from Controller import Controller
 
-# import random
 
-# random.seed(123)
+def read_parameters_from_yaml(file_path: str):
+    with open(file_path, "r") as file:
+        parameters = yaml.safe_load(file)
+        file.close()
+    return parameters
+
+
+parameters = read_parameters_from_yaml("pivotal_parameters.yaml")
+
+MCTS_params = parameters["MCTS"]
+MCTS_exploration = int(MCTS_params["MCTS_exploration"])
+rollouts = int(MCTS_params["rollouts"])
+epsilon = int(MCTS_params["epsilon"])
+
+NN_params = parameters["neural_net"]
+hidden_layers = int(NN_params["hidden_layers"])
+neurons_per_layer = int(NN_params["neurons_per_layer"])
+activation_function = NN_params["activation_function"]
+
+training_params = parameters["training"]
+optimizer = training_params["optimizer"]
+epochs = int(training_params["epochs"])
+episodes = int(training_params["episodes"])
+learning_rate = float(training_params["learning_rate"])
+RBUF_sample_size = int(training_params["RBUF_sample_size"])
+
+hex_params = parameters["hex"]
+board_size = int(hex_params["board_size"])
 
 board: list[list[Player]] = []
-
-for i in range(5):
+for i in range(board_size):
     row: list[Player] = []
-    for j in range(5):
+    for j in range(board_size):
         row.append(Player.EMPTY)
     board.append(row)
 
-
 Hex = Hex(board, True)
-
 Nim = Nim(17, 5, True)
 
-NN = NeuralNet(len(board) ** 2 + 1, len(board) ** 2, 2, 5)
+NN = NeuralNet(
+    input_size=len(board) ** 2 + 1,
+    output_size=len(board) ** 2,
+    hidden_layers=hidden_layers,
+    neurons_per_layer=neurons_per_layer,
+    activation_function=activation_function,
+    optimizer=optimizer,
+)
 
-MCTS = MonteCarloTreeSearch(1, Node(Hex, None, None), NN, 1, 10)
+MCTS = MonteCarloTreeSearch(
+    exploration_param=MCTS_exploration,
+    root=Node(Hex, None, None),
+    ANET=NN,
+    epsilon=epsilon,
+    nr_rollouts=rollouts,
+)
 
-controller = Controller(MCTS, NN)
+controller = Controller(
+    MCTS,
+    learning_rate=learning_rate,
+    RBUF_sample_size=RBUF_sample_size,
+    training_epochs=epochs,
+)
 
-controller.run(10)
+controller.run(episodes)

@@ -30,17 +30,17 @@ class MonteCarloTreeSearch:
             leaf_node = self.traverse_tree()
 
             if leaf_node.visits == 0:
-                result = leaf_node.rollout(self.ANET)
+                result = leaf_node.rollout(self.ANET, self.epsilon)
                 leaf_node.backpropagate(result)
             else:
                 leaf_node.node_expansion()
                 if len(leaf_node.children) != 0:
                     random_index = random.randint(0, len(leaf_node.children) - 1)
                     random_child = leaf_node.children[random_index]
-                    result = random_child.rollout(self.ANET)
+                    result = random_child.rollout(self.ANET, self.epsilon)
                     random_child.backpropagate(result)
                 else:
-                    result = leaf_node.rollout(self.ANET)
+                    result = leaf_node.rollout(self.ANET, self.epsilon)
                     leaf_node.backpropagate(result)
         return max(self.root.children, key=lambda x: x.visits)
 
@@ -102,7 +102,7 @@ class Node:
 
             return best_child
 
-    def rollout(self, ANET: NeuralNet):
+    def rollout(self, ANET: NeuralNet, epsilon: float):
         # Simulating a random game from the state of a node to a terminal state
         current_state = self.state
         while not current_state.is_terminal():
@@ -118,7 +118,12 @@ class Node:
                         distribution[i][j] = float("-inf")
 
             row, col = divmod(distribution.argmax().item(), distribution.shape[1])
-            current_state = current_state.take_action((int(row), int(col)))
+
+            if random.random() < epsilon:
+                random_action = random.choice(current_state.get_legal_actions())
+                current_state = current_state.take_action(random_action)
+            else:
+                current_state = current_state.take_action((int(row), int(col)))
 
             # current_state = current_state.take_action(
             #     (

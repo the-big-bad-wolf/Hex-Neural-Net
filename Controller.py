@@ -1,20 +1,17 @@
 from MonteCarloTreeSearch import MonteCarloTreeSearch, Node
-from NeuralNet import NeuralNet
 
 
 class Controller:
     def __init__(
         self,
         MCTS: MonteCarloTreeSearch,
-        ANET: NeuralNet,
-        RBUF_subset_size: int = 10,
+        RBUF_sample_size: int = 10,
         learning_rate: float = 0.01,
         training_epochs: int = 25,
     ):
         self.MCTS = MCTS
-        self.ANET = ANET
         self.RBUF: list[tuple[list, list[list[float]]]] = []
-        self.RBUF_subset_size = RBUF_subset_size
+        self.RBUF_sample_size = RBUF_sample_size
         self.learning_rate = learning_rate
         self.training_epochs = training_epochs
 
@@ -22,9 +19,9 @@ class Controller:
         for i in range(nr_episodes):
             print(f"Running episode {i}")
             self.run_episode()
-            self.ANET.update_params(
+            self.MCTS.ANET.update_params(
                 self.RBUF,
-                self.RBUF_subset_size,
+                self.RBUF_sample_size,
                 self.training_epochs,
                 self.learning_rate,
             )
