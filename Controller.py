@@ -18,6 +18,7 @@ class Controller:
         self.M = M
 
     def run(self, nr_episodes: int):
+        self.MCTS.ANET.save_model("0episodes.pth")
         for i in range(1, nr_episodes + 1):
             print(f"Running episode {i}")
             self.run_episode()
