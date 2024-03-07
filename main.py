@@ -63,9 +63,10 @@ controller = Controller(
     learning_rate=learning_rate,
     RBUF_sample_size=RBUF_sample_size,
     training_epochs=epochs,
+    M=M,
 )
 
-controller.run(episodes)
+# controller.run(episodes)
 
 
 NN1 = NeuralNet(
@@ -85,14 +86,14 @@ NN2 = NeuralNet(
     optimizer=optimizer,
 )
 NN1.load_model("0episodes.pth")
-NN2.load_model("50episodes.pth")
+NN2.load_model("10episodes.pth")
 
 tournament = TOPP(board_size, [NN1, NN2])
 
 wins = 0
 for _ in range(nr_games):
-    result = tournament.run_match((NN1, NN2))
-    if result == 1:
+    result = tournament.run_match((NN2, NN1))
+    if result == -1:
         wins += 1
 
-print(f"NN1 won {wins/nr_games}% of games")
+print(f"NN1 won {wins/nr_games*100}% of games")
