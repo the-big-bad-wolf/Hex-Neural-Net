@@ -5,6 +5,7 @@ from NeuralNet import NeuralNet
 import torch
 import random
 import copy
+import time
 
 
 class MonteCarloTreeSearch:
@@ -14,19 +15,20 @@ class MonteCarloTreeSearch:
         root: Node,
         ANET: NeuralNet,
         epsilon: float,
-        nr_rollouts: int,
+        rollout_duration: int,
     ):
         self.ANET = ANET
         self.root = root
         self.epsilon = epsilon
         self.exploration_param = exploration_param
-        self.nr_rollouts = nr_rollouts
+        self.rollout_duration = rollout_duration
         self.original_root = copy.deepcopy(self.root)
 
     def search(self):
         # Running the Monte Carlo Tree Search algorithm for a number of iterations
         self.root.node_expansion()
-        for _ in range(self.nr_rollouts):
+        start_time = time.time()
+        while time.time() - start_time < self.rollout_duration:
             leaf_node = self.traverse_tree()
 
             if leaf_node.visits == 0:

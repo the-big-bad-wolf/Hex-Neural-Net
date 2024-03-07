@@ -1,5 +1,5 @@
 import yaml
-from Hex import Hex, Player
+from Hex import Hex
 from NeuralNet import NeuralNet
 from MonteCarloTreeSearch import Node, MonteCarloTreeSearch
 from Controller import Controller
@@ -17,7 +17,7 @@ parameters = read_parameters_from_yaml("pivotal_parameters.yaml")
 
 MCTS_params = parameters["MCTS"]
 MCTS_exploration = int(MCTS_params["MCTS_exploration"])
-rollouts = int(MCTS_params["rollouts"])
+rollout_duration = int(MCTS_params["rollout_duration"])
 epsilon = int(MCTS_params["epsilon"])
 
 NN_params = parameters["neural_net"]
@@ -35,13 +35,10 @@ RBUF_sample_size = int(training_params["RBUF_sample_size"])
 hex_params = parameters["hex"]
 board_size = int(hex_params["board_size"])
 
-board: list[list[Player]] = []
-for i in range(board_size):
-    row: list[Player] = []
-    for j in range(board_size):
-        row.append(Player.EMPTY)
-    board.append(row)
+M = int(parameters["M"])
+nr_games = int(parameters["nr_games"])
 
+board = Hex.empty_board(board_size)
 Hex = Hex(board, True)
 
 NN = NeuralNet(
@@ -58,7 +55,7 @@ MCTS = MonteCarloTreeSearch(
     root=Node(Hex, None, None),
     ANET=NN,
     epsilon=epsilon,
-    nr_rollouts=rollouts,
+    rollout_duration=rollout_duration,
 )
 
 controller = Controller(
@@ -68,7 +65,7 @@ controller = Controller(
     training_epochs=epochs,
 )
 
-# controller.run(episodes)
+controller.run(episodes)
 
 
 NN1 = NeuralNet(
@@ -93,7 +90,6 @@ NN2.load_model("50episodes.pth")
 tournament = TOPP(board_size, [NN1, NN2])
 
 wins = 0
-nr_games = 100
 for _ in range(nr_games):
     result = tournament.run_match((NN1, NN2))
     if result == 1:

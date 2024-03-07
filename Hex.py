@@ -17,6 +17,16 @@ class Hex(State):
         self.board = board
         self.player1_turn = player1_turn
 
+    @staticmethod
+    def empty_board(size: int):
+        board: list[list[Player]] = []
+        for _ in range(size):
+            row: list[Player] = []
+            for _ in range(size):
+                row.append(Player.EMPTY)
+            board.append(row)
+        return board
+
     def get_legal_actions(self):
         if self.is_terminal():
             return []

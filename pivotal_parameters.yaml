@@ -1,6 +1,6 @@
 MCTS:
   MCTS_exploration: 1
-  rollouts: 500
+  rollout_duration: 2
   epsilon: 0.05
 
 neural_net:
@@ -10,7 +10,7 @@ neural_net:
   activation_function: relu # sigmoid/tanh/relu/linear
 
 training:
-  episodes: 50
+  episodes: 20
   optimizer: sgd # adagrad/sgd/RMSPROP/adam
   epochs: 35
   learning_rate: 0.02
@@ -18,3 +18,6 @@ training:
 
 hex:
   board_size: 5 #creates nxn board (between 3 and 10)
+
+M: 15 #Save interval of neural nets
+nr_games: 100 #Number of games to play in TOPP

@@ -8,27 +8,27 @@ class Controller:
         RBUF_sample_size: int = 10,
         learning_rate: float = 0.01,
         training_epochs: int = 25,
+        M: int = 10,
     ):
         self.MCTS = MCTS
         self.RBUF: list[tuple[list, list[list[float]]]] = []
         self.RBUF_sample_size = RBUF_sample_size
         self.learning_rate = learning_rate
         self.training_epochs = training_epochs
+        self.M = M
 
     def run(self, nr_episodes: int):
-        for i in range(nr_episodes):
+        for i in range(1, nr_episodes + 1):
             print(f"Running episode {i}")
             self.run_episode()
-
-            if i % 50 == 0:
-                self.MCTS.ANET.save_model(str(i) + "episodes.pth")
-
             self.MCTS.ANET.update_params(
                 self.RBUF,
                 self.RBUF_sample_size,
                 self.training_epochs,
                 self.learning_rate,
             )
+            if i % self.M == 0:
+                self.MCTS.ANET.save_model(str(i) + "episodes.pth")
             self.MCTS.reset_root()
 
     def run_episode(self):
