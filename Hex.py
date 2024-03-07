@@ -8,7 +8,7 @@ from typing import Set
 class Player(Enum):
     EMPTY = 0
     PLAYER1 = 1
-    PLAYER2 = 2
+    PLAYER2 = -1
 
 
 class Hex(State):
@@ -32,7 +32,7 @@ class Hex(State):
         if self.player1_turn:
             return flattened_board + [1]
         else:
-            return flattened_board + [0]
+            return flattened_board + [-1]
 
     def take_action(self, action: Tuple[int, int]):
         i, j = action
@@ -129,7 +129,10 @@ def matrix(n: int, m: int, li: list[list[Player]]):
 
                     # Appending the
                     # Diagonal Elements
-                    lst.append(li[i][j].value)
+                    value = li[i][j].value
+                    if value == -1:
+                        value = 2
+                    lst.append(value)
 
         # Printing reversed Diagonal
         # Elements

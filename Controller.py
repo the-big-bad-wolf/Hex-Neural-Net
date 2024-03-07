@@ -19,6 +19,10 @@ class Controller:
         for i in range(nr_episodes):
             print(f"Running episode {i}")
             self.run_episode()
+
+            if i % 50 == 0:
+                self.MCTS.ANET.save_model(str(i) + "episodes.pth")
+
             self.MCTS.ANET.update_params(
                 self.RBUF,
                 self.RBUF_sample_size,

@@ -1,9 +1,9 @@
 import yaml
 from Hex import Hex, Player
-from Nim import Nim
 from NeuralNet import NeuralNet
 from MonteCarloTreeSearch import Node, MonteCarloTreeSearch
 from Controller import Controller
+from TOPP import TOPP
 
 
 def read_parameters_from_yaml(file_path: str):
@@ -43,7 +43,6 @@ for i in range(board_size):
     board.append(row)
 
 Hex = Hex(board, True)
-Nim = Nim(17, 5, True)
 
 NN = NeuralNet(
     input_size=len(board) ** 2 + 1,
@@ -69,4 +68,35 @@ controller = Controller(
     training_epochs=epochs,
 )
 
-controller.run(episodes)
+# controller.run(episodes)
+
+
+NN1 = NeuralNet(
+    input_size=len(board) ** 2 + 1,
+    output_size=len(board) ** 2,
+    hidden_layers=hidden_layers,
+    neurons_per_layer=neurons_per_layer,
+    activation_function=activation_function,
+    optimizer=optimizer,
+)
+NN2 = NeuralNet(
+    input_size=len(board) ** 2 + 1,
+    output_size=len(board) ** 2,
+    hidden_layers=hidden_layers,
+    neurons_per_layer=neurons_per_layer,
+    activation_function=activation_function,
+    optimizer=optimizer,
+)
+NN1.load_model("0episodes.pth")
+NN2.load_model("50episodes.pth")
+
+tournament = TOPP(board_size, [NN1, NN2])
+
+wins = 0
+nr_games = 100
+for _ in range(nr_games):
+    result = tournament.run_match((NN1, NN2))
+    if result == 1:
+        wins += 1
+
+print(f"NN1 won {wins/nr_games}% of games")

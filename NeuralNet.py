@@ -109,3 +109,11 @@ class NeuralNet(nn.Module):
 
             print(f"Loss: {sum(losses) / len(losses)}")
             # print(f"Loss: {loss} ,  {i}")
+
+    def save_model(self, path: str):
+        torch.save(self.state_dict(), path)
+        print("Model saved")
+
+    def load_model(self, path: str):
+        self.load_state_dict(torch.load(path))
+        print("Model loaded")

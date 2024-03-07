@@ -1,20 +1,20 @@
 MCTS:
   MCTS_exploration: 1
-  rollouts: 200
+  rollouts: 500
   epsilon: 0.05
 
 neural_net:
   hidden_layers: 2
-  neurons_per_layer: 10
+  neurons_per_layer: 50
   weight_bias_initial_range: [-0.1, 0.1]
-  activation_function: tanh # sigmoid/tanh/relu/linear
+  activation_function: relu # sigmoid/tanh/relu/linear
 
 training:
   episodes: 50
-  optimizer: adam # adagrad/sgd/RMSPROP/adam
-  epochs: 25
-  learning_rate: 0.01
-  RBUF_sample_size: 400
+  optimizer: sgd # adagrad/sgd/RMSPROP/adam
+  epochs: 35
+  learning_rate: 0.02
+  RBUF_sample_size: 100
 
 hex:
   board_size: 5 #creates nxn board (between 3 and 10)
