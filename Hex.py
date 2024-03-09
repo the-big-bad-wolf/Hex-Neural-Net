@@ -70,6 +70,12 @@ class Hex(State):
 
         return False
 
+    def get_result(self):
+        if not self.player1_turn:
+            return 1
+        else:
+            return -1
+
     def dfs(
         self, i: int, j: int, player: Player, visited: Set[Tuple[int, int]]
     ) -> bool:
@@ -102,12 +108,6 @@ class Hex(State):
             or self.dfs(i - 1, j + 1, player, visited)
             or self.dfs(i + 1, j - 1, player, visited)
         )
-
-    def get_result(self):
-        if not self.player1_turn:
-            return 1
-        else:
-            return -1
 
     def __repr__(self):
         return "\n".join(

@@ -18,7 +18,7 @@ class Controller:
         self.M = M
 
     def run(self, nr_episodes: int):
-        self.MCTS.ANET.save_model("0episodes.pth")
+        self.MCTS.ANET.save_model("./models/0episodes.pth")
         for i in range(1, nr_episodes + 1):
             print(f"Running episode {i}")
             self.run_episode()
@@ -29,7 +29,7 @@ class Controller:
                 self.learning_rate,
             )
             if i % self.M == 0:
-                self.MCTS.ANET.save_model(str(i) + "episodes.pth")
+                self.MCTS.ANET.save_model("./models/" + str(i) + "episodes.pth")
             self.MCTS.reset_root()
 
     def run_episode(self):

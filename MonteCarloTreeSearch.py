@@ -127,13 +127,6 @@ class Node:
             else:
                 current_state = current_state.take_action((int(row), int(col)))
 
-            # current_state = current_state.take_action(
-            #     (
-            #         int(distribution.argmax().item()) + 1,
-            #         int(distribution.argmax().item()) + 1,
-            #     )
-            # )
-
         return current_state.get_result()
 
     def backpropagate(self, result: float):

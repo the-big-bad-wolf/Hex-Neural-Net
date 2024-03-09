@@ -66,8 +66,7 @@ controller = Controller(
     M=M,
 )
 
-# controller.run(episodes)
-
+controller.run(episodes)
 
 NN1 = NeuralNet(
     input_size=len(board) ** 2 + 1,
@@ -85,15 +84,17 @@ NN2 = NeuralNet(
     activation_function=activation_function,
     optimizer=optimizer,
 )
-NN1.load_model("0episodes.pth")
-NN2.load_model("10episodes.pth")
+NN1.load_model("./models/1400episodes.pth")
 
-tournament = TOPP(board_size, [NN1, NN2])
 
 wins = 0
-for _ in range(nr_games):
-    result = tournament.run_match((NN2, NN1))
-    if result == -1:
-        wins += 1
+for i in range(0, 751, 50):
+    for _ in range(nr_games):
+        NN2.load_model("./models/" + str(i) + "episodes.pth")
+        tournament = TOPP(board_size, [NN1, NN2])
+        result = tournament.run_match((NN1, NN2))
+        if result == 1:
+            wins += 1
 
-print(f"NN1 won {wins/nr_games*100}% of games")
+print(f"NN1 won {wins/nr_games/750*50*100}% of games")
+print("NN1 won", wins, "games")
