@@ -38,11 +38,11 @@ class Hex(State):
         return actions
 
     def get_state(self):
-        flattened_board = [cell.value for row in self.board for cell in row]
+        flattened_board = [float(cell.value) for row in self.board for cell in row]
         if self.player1_turn:
-            return flattened_board + [1]
+            return flattened_board + [1.0]
         else:
-            return flattened_board + [-1]
+            return flattened_board + [-1.0]
 
     def take_action(self, action: Tuple[int, int]):
         i, j = action
@@ -125,7 +125,7 @@ def matrix(n: int, m: int, li: list[list[Player]]):
     ctr = 0
     while ctr < 2 * n - 1:
         print(" " * abs(n - ctr - 1), end="")
-        lst: list[int] = []
+        lst: list[float] = []
 
         # Iterate [0, m]
         for i in range(m):

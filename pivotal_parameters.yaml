@@ -1,13 +1,13 @@
 MCTS:
   MCTS_exploration: 1
-  rollout_duration: 2
+  rollout_duration: 1
   epsilon: 0.05
 
 neural_net:
   hidden_layers: 2
   neurons_per_layer: 50
   weight_bias_initial_range: [-0.1, 0.1]
-  activation_function: relu # sigmoid/tanh/relu/linear
+  activation_function: linear # sigmoid/tanh/relu/linear
 
 training:
   episodes: 20

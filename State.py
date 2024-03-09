@@ -14,7 +14,7 @@ class State(ABC):
         pass
 
     @abstractmethod
-    def get_state(self) -> list:
+    def get_state(self) -> list[float]:
         # Returning the state of the game
         pass
 

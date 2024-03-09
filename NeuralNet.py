@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import torch.optim as optim
 import random
 
 
@@ -25,25 +24,25 @@ class NeuralNet(nn.Module):
 
         # Choose the activation function
         if activation_function == "relu":
-            self.activation_function = torch.relu
+            self.activation_function = nn.ReLU()
         elif activation_function == "sigmoid":
-            self.activation_function = torch.sigmoid
+            self.activation_function = nn.Sigmoid()
         elif activation_function == "tanh":
-            self.activation_function = torch.tanh
+            self.activation_function = nn.Tanh()
         elif activation_function == "linear":
-            self.activation_function = lambda x: x
+            self.activation_function = nn.Identity()
         else:
             raise ValueError("Activation function not recognized")
 
         # Choose optimizer
         if optimizer == "adam":
-            self.optimizer = optim.Adam
+            self.optimizer = torch.optim.Adam
         elif optimizer == "sgd":
-            self.optimizer = optim.SGD
+            self.optimizer = torch.optim.SGD
         elif optimizer == "adagrad":
-            self.optimizer = optim.Adagrad
+            self.optimizer = torch.optim.Adagrad
         elif optimizer == "RMSPROP":
-            self.optimizer = optim.RMSprop
+            self.optimizer = torch.optim.RMSprop
         else:
             raise ValueError("Optimizer not recognized")
 
@@ -69,7 +68,7 @@ class NeuralNet(nn.Module):
             self.output_layer.bias = nn.Parameter(biases[-1])
 
     def forward(self, x: torch.Tensor):
-        x = self.activation_function(self.input_layer(x.float()))
+        x = self.input_layer(x)
         for layer in self.hidden:
             x = self.activation_function(layer(x))
         x = self.output_layer(x)
@@ -77,7 +76,7 @@ class NeuralNet(nn.Module):
 
     def update_params(
         self,
-        RBUF: list[tuple[list, list[list[float]]]],
+        RBUF: list[tuple[list[float], list[list[float]]]],
         subset_size: int,
         epochs: int,
         learning_rate: float,

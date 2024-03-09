@@ -11,7 +11,7 @@ class Controller:
         M: int = 10,
     ):
         self.MCTS = MCTS
-        self.RBUF: list[tuple[list, list[list[float]]]] = []
+        self.RBUF: list[tuple[list[float], list[list[float]]]] = []
         self.RBUF_sample_size = RBUF_sample_size
         self.learning_rate = learning_rate
         self.training_epochs = training_epochs
@@ -47,7 +47,7 @@ class Controller:
 
     def get_distibution(self, root: Node):
 
-        D = [[float(0)] * len(root.state.board) for _ in range(len(root.state.board))]
+        D = [[0.0] * len(root.state.board) for _ in range(len(root.state.board))]
 
         sum_visits = 0
         for child in root.children:
@@ -60,6 +60,5 @@ class Controller:
                 if sum_visits != 0:
                     D[i][j] = D[i][j] / sum_visits
                 else:
-                    D[i][j] = 0
-
+                    D[i][j] = 0.0
         return D
