@@ -20,7 +20,7 @@ class TOPP:
         game = copy.deepcopy(self.game)
         current_player = players[0]
         while not game.is_terminal():
-            distribution = current_player.forward(torch.tensor(game.get_state()))
+            distribution = current_player(torch.tensor(game.get_state()))
             legal_actions = game.get_legal_actions()
             distribution = distribution.reshape(len(game.board), len(game.board))
             for i in range(len(distribution)):

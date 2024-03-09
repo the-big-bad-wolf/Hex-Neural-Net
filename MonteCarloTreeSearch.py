@@ -108,7 +108,7 @@ class Node:
         # Simulating a random game from the state of a node to a terminal state
         current_state = self.state
         while not current_state.is_terminal():
-            distribution = ANET.forward(torch.tensor(current_state.get_state()))
+            distribution = ANET(torch.tensor(current_state.get_state()))
             legal_actions = current_state.get_legal_actions()
             distribution = distribution.reshape(
                 len(current_state.board), len(current_state.board)

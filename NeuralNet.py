@@ -96,7 +96,7 @@ class NeuralNet(nn.Module):
 
         losses = []
         for _ in range(epochs):
-            outputs = self.forward(input_tensor)
+            outputs = self(input_tensor)
             loss = criterion(outputs, target_tensor)
             losses.append(loss.item())
             optimizer.zero_grad()
