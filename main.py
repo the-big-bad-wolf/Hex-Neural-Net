@@ -4,6 +4,7 @@ from NeuralNet import NeuralNet
 from MonteCarloTreeSearch import Node, MonteCarloTreeSearch
 from Controller import Controller
 from TOPP import TOPP
+from RLS import RLS
 
 
 def read_parameters_from_yaml(file_path: str):
@@ -47,7 +48,6 @@ NN = NeuralNet(
     hidden_layers=hidden_layers,
     neurons_per_layer=neurons_per_layer,
     activation_function=activation_function,
-    optimizer=optimizer,
 )
 
 MCTS = MonteCarloTreeSearch(
@@ -58,10 +58,13 @@ MCTS = MonteCarloTreeSearch(
     rollout_duration=rollout_duration,
 )
 
+RLS = RLS(optimizer=optimizer)
+
 controller = Controller(
-    MCTS,
-    learning_rate=learning_rate,
+    MCTS=MCTS,
+    RLS=RLS,
     RBUF_sample_size=RBUF_sample_size,
+    learning_rate=learning_rate,
     training_epochs=epochs,
     M=M,
 )
@@ -74,7 +77,6 @@ NN1 = NeuralNet(
     hidden_layers=hidden_layers,
     neurons_per_layer=neurons_per_layer,
     activation_function=activation_function,
-    optimizer=optimizer,
 )
 NN2 = NeuralNet(
     input_size=len(board) ** 2 + 1,
@@ -82,7 +84,6 @@ NN2 = NeuralNet(
     hidden_layers=hidden_layers,
     neurons_per_layer=neurons_per_layer,
     activation_function=activation_function,
-    optimizer=optimizer,
 )
 NN1.load_model("./models/1400episodes.pth")
 

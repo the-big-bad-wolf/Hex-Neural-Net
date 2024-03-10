@@ -1,16 +1,19 @@
 from MonteCarloTreeSearch import MonteCarloTreeSearch, Node
+from RLS import RLS
 
 
 class Controller:
     def __init__(
         self,
         MCTS: MonteCarloTreeSearch,
+        RLS: RLS,
         RBUF_sample_size: int = 10,
         learning_rate: float = 0.01,
         training_epochs: int = 25,
         M: int = 10,
     ):
         self.MCTS = MCTS
+        self.RLS = RLS
         self.RBUF: list[tuple[list[float], list[list[float]]]] = []
         self.RBUF_sample_size = RBUF_sample_size
         self.learning_rate = learning_rate
@@ -22,11 +25,12 @@ class Controller:
         for i in range(1, nr_episodes + 1):
             print(f"Running episode {i}")
             self.run_episode()
-            self.MCTS.ANET.update_params(
-                self.RBUF,
-                self.RBUF_sample_size,
-                self.training_epochs,
-                self.learning_rate,
+            self.RLS.train(
+                neural_net=self.MCTS.ANET,
+                RBUF=self.RBUF,
+                subset_size=self.RBUF_sample_size,
+                epochs=self.training_epochs,
+                learning_rate=self.learning_rate,
             )
             if i % self.M == 0:
                 self.MCTS.ANET.save_model("./models/" + str(i) + "episodes.pth")

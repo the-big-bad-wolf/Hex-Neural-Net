@@ -7,10 +7,10 @@ neural_net:
   hidden_layers: 2
   neurons_per_layer: 50
   weight_bias_initial_range: [-0.1, 0.1]
-  activation_function: linear # sigmoid/tanh/relu/linear
+  activation_function: tanh # sigmoid/tanh/relu/linear
 
 training:
-  episodes: 20
+  episodes: 50
   optimizer: adam # adagrad/sgd/RMSPROP/adam
   epochs: 35
   learning_rate: 0.02

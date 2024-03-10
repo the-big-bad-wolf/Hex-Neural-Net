@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import random
 
 
 class NeuralNet(nn.Module):
@@ -11,7 +10,6 @@ class NeuralNet(nn.Module):
         hidden_layers: int,
         neurons_per_layer: int,
         activation_function: str,
-        optimizer: str,
         weights: torch.Tensor | None = None,
         biases: torch.Tensor | None = None,
     ):
@@ -33,18 +31,6 @@ class NeuralNet(nn.Module):
             self.activation_function = nn.Identity()
         else:
             raise ValueError("Activation function not recognized")
-
-        # Choose optimizer
-        if optimizer == "adam":
-            self.optimizer = torch.optim.Adam
-        elif optimizer == "sgd":
-            self.optimizer = torch.optim.SGD
-        elif optimizer == "adagrad":
-            self.optimizer = torch.optim.Adagrad
-        elif optimizer == "RMSPROP":
-            self.optimizer = torch.optim.RMSprop
-        else:
-            raise ValueError("Optimizer not recognized")
 
         # Create the input layer
         self.input_layer = nn.Linear(input_size, neurons_per_layer)
@@ -73,36 +59,6 @@ class NeuralNet(nn.Module):
             x = self.activation_function(layer(x))
         x = self.output_layer(x)
         return x
-
-    def update_params(
-        self,
-        RBUF: list[tuple[list[float], list[list[float]]]],
-        subset_size: int,
-        epochs: int,
-        learning_rate: float,
-    ):
-        subset_size = min(subset_size, len(RBUF))
-        random_subset = random.sample(RBUF, k=subset_size)
-        input = [item[0] for item in random_subset]
-        target = [item[1] for item in random_subset]
-
-        input_tensor = torch.tensor(input)
-        target_tensor = torch.tensor(target)
-        target_tensor = target_tensor.flatten(start_dim=1, end_dim=2)
-
-        optimizer = self.optimizer(self.parameters(), lr=learning_rate)
-        criterion = torch.nn.CrossEntropyLoss()
-
-        losses = []
-        for _ in range(epochs):
-            outputs = self(input_tensor)
-            loss = criterion(outputs, target_tensor)
-            losses.append(loss.item())
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-
-            print(f"Loss: {loss}")
 
     def save_model(self, path: str):
         torch.save(self.state_dict(), path)
