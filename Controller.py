@@ -1,5 +1,6 @@
 from MonteCarloTreeSearch import MonteCarloTreeSearch, Node
 from RLS import RLS
+from HexDataset import HexDataset
 
 
 class Controller:
@@ -14,7 +15,7 @@ class Controller:
     ):
         self.MCTS = MCTS
         self.RLS = RLS
-        self.RBUF: list[tuple[list[float], list[list[float]]]] = []
+        self.RBUF = HexDataset([], [])
         self.RBUF_sample_size = RBUF_sample_size
         self.learning_rate = learning_rate
         self.training_epochs = training_epochs
@@ -43,8 +44,8 @@ class Controller:
 
     def make_move(self):
         new_root = self.MCTS.search()
-        self.RBUF.append(
-            (self.MCTS.root.state.get_state(), self.get_distibution(self.MCTS.root))
+        self.RBUF.add_data(
+            self.MCTS.root.state.get_state(), self.get_distibution(self.MCTS.root)
         )
         self.MCTS.root = new_root
         self.MCTS.root.parent = None

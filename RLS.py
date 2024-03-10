@@ -1,6 +1,7 @@
 from NeuralNet import NeuralNet
-import random
+from HexDataset import HexDataset
 import torch
+from torch.utils.data import DataLoader
 
 
 class RLS:
@@ -24,40 +25,31 @@ class RLS:
     def train(
         self,
         neural_net: NeuralNet,
-        RBUF: list[tuple[list[float], list[list[float]]]],
+        RBUF: HexDataset,
         subset_size: int,
         epochs: int,
         learning_rate: float,
     ):
-        subset_size = min(subset_size, len(RBUF))
-        random_subset = random.sample(RBUF, k=subset_size)
-        input = [item[0] for item in random_subset]
-        target = [item[1] for item in random_subset]
-
-        input_tensor = torch.tensor(input)
-        target_tensor = torch.tensor(target)
-        target_tensor = target_tensor.flatten(start_dim=1, end_dim=2)
-
+        training_data = DataLoader(RBUF, batch_size=subset_size, shuffle=True)
+        size = len(training_data.dataset)
         optimizer = self.optimizer(neural_net.parameters(), lr=learning_rate)
         criterion = torch.nn.CrossEntropyLoss()
 
-        losses = []
         neural_net.train(True)
-        for _ in range(epochs):
-            outputs = neural_net(input_tensor)
-            loss = criterion(outputs, target_tensor)
-            losses.append(loss.item())
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+        for t in range(epochs):
+            print(f"Epoch {t+1}\n-------------------------------")
+            for batch, (X, y) in enumerate(training_data):
+                # Compute prediction and loss
+                pred = neural_net(X)
+                loss = criterion(pred, y)
 
-            print(f"Loss: {loss}")
+                # Backpropagation
+                loss.backward()
+                optimizer.step()
+                optimizer.zero_grad()
+
+                if batch % 1 == 0:
+                    loss, current = loss.item(), batch * subset_size + len(X)
+                    print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
+
         neural_net.train(False)
-
-    def predict(self, state):
-        # Implement the prediction logic here
-        pass
-
-    def evaluate(self, environment):
-        # Implement the evaluation logic here
-        pass
