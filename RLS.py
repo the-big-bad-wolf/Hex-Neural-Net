@@ -41,12 +41,10 @@ class RLS:
         optimizer = self.optimizer(neural_net.parameters(), lr=learning_rate)
         criterion = torch.nn.CrossEntropyLoss()
 
-        losses = []
         neural_net.train(True)
         for _ in range(epochs):
             outputs = neural_net(input_tensor)
             loss = criterion(outputs, target_tensor)
-            losses.append(loss.item())
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
