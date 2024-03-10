@@ -53,11 +53,3 @@ class RLS:
 
             print(f"Loss: {loss}")
         neural_net.train(False)
-
-    def predict(self, state):
-        # Implement the prediction logic here
-        pass
-
-    def evaluate(self, environment):
-        # Implement the evaluation logic here
-        pass
