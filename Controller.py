@@ -58,7 +58,7 @@ class Controller:
         for child in root.children:
             assert child.arcTo is not None
             sum_visits += child.visits
-            D[child.arcTo[0]][child.arcTo[1]] = child.visits
+            D[child.arcTo[0]][child.arcTo[1]] = float(child.visits)
 
         for i in range(len(D)):
             for j in range(len(D[i])):

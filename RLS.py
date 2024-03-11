@@ -31,25 +31,21 @@ class RLS:
         learning_rate: float,
     ):
         training_data = DataLoader(RBUF, batch_size=subset_size, shuffle=True)
-        size = len(training_data.dataset)
+        inputs, targets = next(iter(training_data))
+
         optimizer = self.optimizer(neural_net.parameters(), lr=learning_rate)
         criterion = torch.nn.CrossEntropyLoss()
 
         neural_net.train(True)
-        for t in range(epochs):
-            print(f"Epoch {t+1}\n-------------------------------")
-            for batch, (X, y) in enumerate(training_data):
-                # Compute prediction and loss
-                pred = neural_net(X)
-                loss = criterion(pred, y)
+        for _ in range(epochs):
+            # Compute prediction and loss
+            pred = neural_net(inputs)
+            loss = criterion(pred, targets)
 
-                # Backpropagation
-                loss.backward()
-                optimizer.step()
-                optimizer.zero_grad()
-
-                if batch % 1 == 0:
-                    loss, current = loss.item(), batch * subset_size + len(X)
-                    print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
+            # Backpropagation
+            loss.backward()
+            optimizer.step()
+            optimizer.zero_grad()
+            print(f"loss: {loss.item():.4f}")
 
         neural_net.train(False)
