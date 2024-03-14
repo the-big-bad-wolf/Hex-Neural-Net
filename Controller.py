@@ -1,5 +1,6 @@
 from MonteCarloTreeSearch import MonteCarloTreeSearch, Node
 from RLS import RLS
+import csv
 
 
 class Controller:
@@ -43,9 +44,20 @@ class Controller:
 
     def make_move(self):
         new_root = self.MCTS.search()
-        self.RBUF.append(
-            (self.MCTS.root.state.get_state(), self.get_distibution(self.MCTS.root))
+
+        (features, target) = (
+            self.MCTS.root.state.get_state(),
+            self.get_distibution(self.MCTS.root),
         )
+
+        def write_to_csv(features, target):
+            with open("trainingdata.csv", "a", newline="") as trainingdata:
+                writer = csv.writer(trainingdata)
+                writer.writerow(features + target)
+
+        write_to_csv(features, target)
+
+        self.RBUF.append((features, target))
         self.MCTS.root = new_root
         self.MCTS.root.parent = None
 
