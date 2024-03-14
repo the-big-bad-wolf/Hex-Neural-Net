@@ -27,9 +27,24 @@ class TOPP:
                 for j in range(len(distribution[i])):
                     if (i, j) not in legal_actions:
                         distribution[i][j] = float("-inf")
-            row, col = divmod(distribution.argmax().item(), distribution.shape[1])
+            # Get the indices of the top 3 highest values in the distribution
+            top_indices = torch.topk(distribution.flatten(), k=3).indices
+            top_probabilities = torch.topk(distribution.flatten(), k=3).values
+            top_probabilities = torch.nn.functional.softmax(top_probabilities, dim=0)
+            # Generate a random number between 0 and 1
+            random_number = torch.rand(1).item()
+            if random_number < top_probabilities[0]:
+                move = top_indices[0]
+            elif random_number < top_probabilities[0] + top_probabilities[1]:
+                move = top_indices[1]
+            else:
+                move = top_indices[2]
+
+            row = move // len(game.board)
+            col = move % len(game.board)
+
             game = game.take_action((int(row), int(col)))
 
             current_player = players[1] if current_player == players[0] else players[0]
-            game.visualize()
+        game.visualize()
         return game.get_result()
