@@ -107,24 +107,24 @@ class Node:
     def rollout(self, ANET: NeuralNet, epsilon: float):
         # Simulating a random game from the state of a node to a terminal state
         current_state = self.state
+
         while not current_state.is_terminal():
-            distribution = ANET(torch.tensor(current_state.get_state()))
-            legal_actions = current_state.get_legal_actions()
-            distribution = distribution.reshape(
-                len(current_state.board), len(current_state.board)
-            )
-
-            for i in range(len(distribution)):
-                for j in range(len(distribution[i])):
-                    if (i, j) not in legal_actions:
-                        distribution[i][j] = float("-inf")
-
-            row, col = divmod(distribution.argmax().item(), distribution.shape[1])
-
             if random.random() < epsilon:
                 random_action = random.choice(current_state.get_legal_actions())
                 current_state = current_state.take_action(random_action)
             else:
+                distribution = ANET(torch.tensor(current_state.get_state()))
+                legal_actions = current_state.get_legal_actions()
+                distribution = distribution.reshape(
+                    len(current_state.board), len(current_state.board)
+                )
+
+                for i in range(len(distribution)):
+                    for j in range(len(distribution[i])):
+                        if (i, j) not in legal_actions:
+                            distribution[i][j] = float("-inf")
+
+                row, col = divmod(distribution.argmax().item(), distribution.shape[1])
                 current_state = current_state.take_action((int(row), int(col)))
 
         return current_state.get_result()
