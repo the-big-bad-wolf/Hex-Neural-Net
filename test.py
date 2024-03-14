@@ -9,14 +9,15 @@ with open("trainingdata.csv", "r") as file:
     # Iterate over each row in the CSV file
     for row in reader:
         # Split the row into individual values
-        values = row
-        features = values[0]
-        targets = []
-        strings = values[1].split(",")
-        for string in strings:
-            targets.append(float(string.strip().strip("[").strip("]")))
-        np_targets = np.array(targets)
-        np_targets = np_targets.reshape(5, 5)
-        targets = np_targets.tolist()
-        print(targets)
+        features: list[float] = []
+        targets: list[list[float]] = []
+        for feature in row[0:25]:
+            features.append(float(feature))
+        print("Features:", features)
+        for target_row in row[26:]:
+            target_row_array = []
+            for probability in target_row.strip().strip("[").strip("]").split(", "):
+                target_row_array.append(float(probability))
+            targets.append(target_row_array)
+        print("Targets:", targets)
         exit()
