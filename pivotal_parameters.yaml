@@ -1,23 +1,22 @@
 MCTS:
   MCTS_exploration: 1
-  rollout_duration: 1.5
+  rollout_duration: 1.2
   epsilon: 1
 
 neural_net:
   hidden_layers: 2
   neurons_per_layer: 50
-  weight_bias_initial_range: [-0.1, 0.1]
   activation_function: tanh # sigmoid/tanh/relu/linear
 
 training:
-  episodes: 55
+  episodes: 10000
   optimizer: adam # adagrad/sgd/RMSPROP/adam
   epochs: 40
   learning_rate: 0.02
-  RBUF_sample_size: 2000
+  RBUF_sample_size: 2048
 
 hex:
   board_size: 5 #creates nxn board (between 3 and 10)
 
-M: 5 #Save interval of neural nets
+M: 50 #Save interval of neural nets
 nr_games: 20 #Number of games to play in TOPP
