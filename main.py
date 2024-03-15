@@ -70,7 +70,7 @@ controller = Controller(
     M=M,
 )
 
-controller.run(episodes)
+# controller.run(episodes)
 
 NN1 = NeuralNet(
     input_size=len(board) ** 2 + 1,
@@ -96,7 +96,7 @@ for i in range(0, episodes + 1, M):
         neurons_per_layer=neurons_per_layer,
         activation_function=activation_function,
     )
-    neural_net.load_model(f"./models/{i}episodes.pth")
+    neural_net.load_model(f"./models/2050episodes/{i}episodes.pth")
     players.append(NNPlayer(str(i), neural_net))
 
 tournament = TOPP(board_size, players)

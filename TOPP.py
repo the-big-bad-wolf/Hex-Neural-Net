@@ -23,10 +23,10 @@ class TOPP:
             for j in range(i + 1, len(self.NNplayers)):
                 player1 = self.NNplayers[i]
                 player2 = self.NNplayers[j]
-                for i in range(nr_games):
+                for k in range(nr_games):
                     self.board = Hex.empty_board(self.board_size)
                     self.game = Hex(self.board, True)
-                    if i % 2 == 0:
+                    if k % 2 == 0:
                         result = self.run_match(
                             (player1.neural_net, player2.neural_net)
                         )

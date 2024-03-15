@@ -62,7 +62,7 @@ class Controller:
                 learning_rate=self.learning_rate,
             )
             if i == 3:
-                self.RBUF = self.RBUF[-100:]
+                self.RBUF = self.RBUF[-2000:]
             if i % self.M == 0:
                 self.MCTS.ANET.save_model("./models/" + str(i) + "episodes.pth")
             self.MCTS.reset_root()
