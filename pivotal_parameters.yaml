@@ -9,7 +9,7 @@ neural_net:
   activation_function: tanh # sigmoid/tanh/relu/linear
 
 training:
-  episodes: 2050
+  episodes: 2950
   optimizer: adam # adagrad/sgd/RMSPROP/adam
   epochs: 40
   learning_rate: 0.02
