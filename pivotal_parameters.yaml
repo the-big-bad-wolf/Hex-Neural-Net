@@ -1,6 +1,6 @@
 MCTS:
   MCTS_exploration: 1
-  rollout_duration: 1.2
+  rollout_duration: 2
   epsilon: 1
 
 neural_net:
@@ -9,11 +9,11 @@ neural_net:
   activation_function: tanh # sigmoid/tanh/relu/linear
 
 training:
-  episodes: 10000
+  episodes: 5000
   optimizer: adam # adagrad/sgd/RMSPROP/adam
   epochs: 40
   learning_rate: 0.02
-  RBUF_sample_size: 2048
+  RBUF_sample_size: 4000
 
 hex:
   board_size: 5 #creates nxn board (between 3 and 10)
