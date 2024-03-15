@@ -70,7 +70,7 @@ controller = Controller(
     M=M,
 )
 
-# controller.run(episodes)
+controller.run(episodes)
 
 NN1 = NeuralNet(
     input_size=len(board) ** 2 + 1,

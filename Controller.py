@@ -21,6 +21,34 @@ class Controller:
         self.training_epochs = training_epochs
         self.M = M
 
+        def load_training_data(file_path):
+            with open(file_path, "r") as file:
+                reader = csv.reader(file)
+                features: list[list[float]] = []
+                targets: list[list[list[float]]] = []
+                for row in reader:
+                    feature: list[float] = []
+                    target: list[list[float]] = []
+                    for square in row[0 : len(MCTS.root.state.get_state())]:
+                        feature.append(float(square))
+                    features.append(feature)
+                    for target_row in row[len(MCTS.root.state.get_state()) :]:
+                        target_row_array = []
+                        for probability in (
+                            target_row.strip().strip("[").strip("]").split(", ")
+                        ):
+                            target_row_array.append(float(probability))
+                        target.append(target_row_array)
+                    targets.append(target)
+
+            return features, targets
+
+        # Seed RBUF with training data
+        features, targets = load_training_data("RBUF_seed/trainingdata.csv")
+        for feature, target in zip(features, targets):
+            self.RBUF.append((feature, target))
+        print("RBUF loaded with", len(self.RBUF), "samples")
+
     def run(self, nr_episodes: int):
         self.MCTS.ANET.save_model("./models/0episodes.pth")
         for i in range(1, nr_episodes + 1):
@@ -33,6 +61,8 @@ class Controller:
                 epochs=self.training_epochs,
                 learning_rate=self.learning_rate,
             )
+            if i == 3:
+                self.RBUF = self.RBUF[-100:]
             if i % self.M == 0:
                 self.MCTS.ANET.save_model("./models/" + str(i) + "episodes.pth")
             self.MCTS.reset_root()
@@ -55,8 +85,10 @@ class Controller:
                 writer = csv.writer(trainingdata)
                 writer.writerow(features + target)
 
-        write_to_csv(features, target)
+        # write_to_csv(features, target)
 
+        while len(self.RBUF) >= 10000:
+            self.RBUF.pop(0)
         self.RBUF.append((features, target))
         self.MCTS.root = new_root
         self.MCTS.root.parent = None
