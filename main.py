@@ -3,8 +3,9 @@ from Hex import Hex
 from NeuralNet import NeuralNet
 from MonteCarloTreeSearch import Node, MonteCarloTreeSearch
 from Controller import Controller
-from TOPP import TOPP
+from TOPP import TOPP, NNPlayer
 from RLS import RLS
+import matplotlib.pyplot as plt
 
 
 def read_parameters_from_yaml(file_path: str):
@@ -37,7 +38,7 @@ hex_params = parameters["hex"]
 board_size = int(hex_params["board_size"])
 
 M = int(parameters["M"])
-nr_games = int(parameters["nr_games"])
+G = int(parameters["G"])
 
 board = Hex.empty_board(board_size)
 Hex = Hex(board, True)
@@ -69,7 +70,7 @@ controller = Controller(
     M=M,
 )
 
-controller.run(episodes)
+# controller.run(episodes)
 
 NN1 = NeuralNet(
     input_size=len(board) ** 2 + 1,
@@ -86,26 +87,28 @@ NN2 = NeuralNet(
     activation_function=activation_function,
 )
 
-test_model = episodes
-NN1.load_model(f"./models/{test_model}episodes.pth")
-
-wins = 0
+players: list[NNPlayer] = []
 for i in range(0, episodes + 1, M):
-    NN2.load_model("./models/" + str(i) + "episodes.pth")
+    neural_net = NeuralNet(
+        input_size=board_size**2 + 1,
+        output_size=board_size**2,
+        hidden_layers=hidden_layers,
+        neurons_per_layer=neurons_per_layer,
+        activation_function=activation_function,
+    )
+    neural_net.load_model(f"./models/{i}episodes.pth")
+    players.append(NNPlayer(str(i), neural_net))
 
-    tournament = TOPP(board_size, [NN1, NN2])
-    print(f"Running model {test_model} vs model {i}")
-    for i in range(nr_games):
-        if i % 2 == 0:
-            result = tournament.run_match((NN1, NN2))
-            if result == 1:
-                wins += 1
-        else:
-            result = tournament.run_match((NN2, NN1))
-            if result == -1:
-                wins += 1
+tournament = TOPP(board_size, players)
+results = tournament.round_robin(G)
 
+# Plotting the results in a bar chart
+x = list(results.keys())
+y = list(results.values())
 
-nr_of_models = episodes / M
-print(f"NN1 won {wins/(nr_games*nr_of_models)*100}% of games")
-print("NN1 won", wins, "games")
+plt.bar(x, y)
+plt.xlabel("Player")
+plt.ylabel("Wins")
+plt.title("Tournament Results")
+plt.xticks(x, [player.id for player in players])
+plt.show()

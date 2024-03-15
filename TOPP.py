@@ -4,17 +4,45 @@ import torch
 import copy
 
 
+class NNPlayer:
+    def __init__(self, id: str, neural_net: NeuralNet) -> None:
+        self.id = id
+        self.neural_net = neural_net
+
+
 class TOPP:
-    def __init__(self, board_size: int, NNplayers: list[NeuralNet]) -> None:
-        board: list[list[Player]] = []
-        for _ in range(board_size):
-            row: list[Player] = []
-            for _ in range(board_size):
-                row.append(Player.EMPTY)
-            board.append(row)
-        self.board = board
-        self.game = Hex(board, True)
+    def __init__(self, board_size: int, NNplayers: list[NNPlayer]) -> None:
         self.NNplayers = NNplayers
+        self.board_size = board_size
+
+    def round_robin(self, nr_games: int) -> dict[str, int]:
+        results: dict[str, int] = {}
+        for player in self.NNplayers:
+            results[player.id] = 0
+        for i in range(len(self.NNplayers)):
+            for j in range(i + 1, len(self.NNplayers)):
+                player1 = self.NNplayers[i]
+                player2 = self.NNplayers[j]
+                for i in range(nr_games):
+                    self.board = Hex.empty_board(self.board_size)
+                    self.game = Hex(self.board, True)
+                    if i % 2 == 0:
+                        result = self.run_match(
+                            (player1.neural_net, player2.neural_net)
+                        )
+                        if result == 1:
+                            results[player1.id] += 1
+                        else:
+                            results[player2.id] += 1
+                    else:
+                        result = self.run_match(
+                            (player2.neural_net, player1.neural_net)
+                        )
+                        if result == -1:
+                            results[player1.id] += 1
+                        else:
+                            results[player2.id] += 1
+        return results
 
     def run_match(self, players: tuple[NeuralNet, NeuralNet]):
         game = copy.deepcopy(self.game)
@@ -46,5 +74,5 @@ class TOPP:
             game = game.take_action((int(row), int(col)))
 
             current_player = players[1] if current_player == players[0] else players[0]
-        game.visualize()
+        # game.visualize()
         return game.get_result()
