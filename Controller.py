@@ -63,7 +63,7 @@ class Controller:
                 epochs=self.training_epochs,
                 learning_rate=self.learning_rate,
             )
-            if i == 3:
+            if i == 10:
                 self.RBUF = self.RBUF[-2000:]
             if i % self.M == 0:
                 self.MCTS.ANET.save_model("./models/" + str(i) + "episodes.pth")
