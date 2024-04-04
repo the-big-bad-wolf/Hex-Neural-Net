@@ -72,21 +72,6 @@ controller = Controller(
 
 # controller.run(episodes)
 
-NN1 = NeuralNet(
-    input_size=len(board) ** 2 + 1,
-    output_size=len(board) ** 2,
-    hidden_layers=hidden_layers,
-    neurons_per_layer=neurons_per_layer,
-    activation_function=activation_function,
-)
-NN2 = NeuralNet(
-    input_size=len(board) ** 2 + 1,
-    output_size=len(board) ** 2,
-    hidden_layers=hidden_layers,
-    neurons_per_layer=neurons_per_layer,
-    activation_function=activation_function,
-)
-
 players: list[NNPlayer] = []
 for i in range(0, episodes + 1, M):
     neural_net = NeuralNet(
@@ -96,7 +81,7 @@ for i in range(0, episodes + 1, M):
         neurons_per_layer=neurons_per_layer,
         activation_function=activation_function,
     )
-    neural_net.load_model(f"./models/2950episodes/{i}episodes.pth")
+    neural_net.load_model(f"./models/{i}episodes.pth")
     players.append(NNPlayer(str(i), neural_net))
 
 tournament = TOPP(board_size, players)
