@@ -72,7 +72,7 @@ controller = Controller(
     visualize=visualize,
 )
 
-# controller.run(episodes)
+controller.run(episodes)
 
 players: list[NNPlayer] = []
 for i in range(0, episodes + 1, M):
@@ -86,7 +86,7 @@ for i in range(0, episodes + 1, M):
     neural_net.load_model(f"./models/{i}episodes.pth")
     players.append(NNPlayer(str(i), neural_net))
 
-tournament = TOPP(board_size, players)
+tournament = TOPP(board_size, players, visualize)
 results = tournament.round_robin(G)
 
 # Plotting the results in a bar chart

@@ -11,9 +11,12 @@ class NNPlayer:
 
 
 class TOPP:
-    def __init__(self, board_size: int, NNplayers: list[NNPlayer]) -> None:
+    def __init__(
+        self, board_size: int, NNplayers: list[NNPlayer], visualize: bool
+    ) -> None:
         self.NNplayers = NNplayers
         self.board_size = board_size
+        self.visualize = visualize
 
     def round_robin(self, nr_games: int) -> dict[str, int]:
         results: dict[str, int] = {}
@@ -74,5 +77,6 @@ class TOPP:
             game = game.take_action((int(row), int(col)))
 
             current_player = players[1] if current_player == players[0] else players[0]
-        # game.visualize()
+        if self.visualize:
+            game.visualize()
         return game.get_result()

@@ -1,6 +1,6 @@
 MCTS:
-  MCTS_exploration: 1
-  rollout_duration: 1
+  MCTS_exploration: 0.9
+  rollout_duration: 1.3
   epsilon: 0.05
 
 neural_net:
@@ -20,4 +20,4 @@ hex:
 
 M: 5 #Save interval of neural nets
 G: 2 #Number of games to play in TOPP
-visualize: False #Whether to visualize the game or not
+visualize: True #Whether to visualize the game or not
