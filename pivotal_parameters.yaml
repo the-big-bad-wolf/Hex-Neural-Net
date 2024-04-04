@@ -16,7 +16,7 @@ training:
   RBUF_sample_size: 4000
 
 hex:
-  board_size: 5 #creates nxn board (between 3 and 10)
+  board_size: 7 #creates nxn board (between 3 and 10)
 
 M: 5 #Save interval of neural nets
 G: 2 #Number of games to play in TOPP
