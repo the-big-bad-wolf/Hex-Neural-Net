@@ -54,6 +54,9 @@ class MonteCarloTreeSearch:
         return current_node
 
     def reset_root(self):
+        self.original_root.state.player1_turn = (
+            not self.original_root.state.player1_turn
+        )
         self.root = copy.deepcopy(self.original_root)
 
 

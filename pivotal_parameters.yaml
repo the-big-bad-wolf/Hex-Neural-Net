@@ -1,6 +1,6 @@
 MCTS:
   MCTS_exploration: 1.0
-  rollout_duration: 1.5
+  rollout_duration: 1
   epsilon: 1.0
 
 neural_net:
@@ -9,9 +9,9 @@ neural_net:
   activation_function: tanh # sigmoid/tanh/relu/linear
 
 training:
-  episodes: 200
+  episodes: 10000
   optimizer: adam # adagrad/sgd/RMSPROP/adam
-  epochs: 40
+  epochs: 50
   learning_rate: 0.02
   RBUF_sample_size: 4000
 
@@ -20,4 +20,4 @@ hex:
 
 M: 50 #Save interval of neural nets
 G: 2 #Number of games to play in TOPP
-visualize: False #Whether to visualize the game or not
+visualize: True #Whether to visualize the game or not
