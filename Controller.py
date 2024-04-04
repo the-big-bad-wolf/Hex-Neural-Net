@@ -72,8 +72,8 @@ class Controller:
     def run_episode(self):
         while not self.MCTS.root.state.is_terminal():
             self.make_move()
-        if self.visualize:
-            self.MCTS.root.state.visualize()
+            if self.visualize:
+                self.MCTS.root.state.visualize()
 
     def make_move(self):
         new_root = self.MCTS.search()
