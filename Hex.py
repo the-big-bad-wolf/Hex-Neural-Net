@@ -56,15 +56,15 @@ class Hex(State):
     def is_terminal(self):
         # Check if player 1 has won
         for i in range(self.size):
-            if self.board[i][0] == Player.PLAYER1 and self.dfs(
-                i, 0, Player.PLAYER1, set()
+            if self.board[0][i] == Player.PLAYER1 and self.dfs(
+                0, i, Player.PLAYER1, set()
             ):
                 return True
 
         # Check if player 2 has won
         for j in range(self.size):
-            if self.board[0][j] == Player.PLAYER2 and self.dfs(
-                0, j, Player.PLAYER2, set()
+            if self.board[j][0] == Player.PLAYER2 and self.dfs(
+                j, 0, Player.PLAYER2, set()
             ):
                 return True
 
@@ -92,10 +92,10 @@ class Hex(State):
         if (i, j) in visited:
             return False
 
-        if player == Player.PLAYER1 and j == self.size - 1:
+        if player == Player.PLAYER1 and i == self.size - 1:
             return True
 
-        if player == Player.PLAYER2 and i == self.size - 1:
+        if player == Player.PLAYER2 and j == self.size - 1:
             return True
 
         visited.add((i, j))
