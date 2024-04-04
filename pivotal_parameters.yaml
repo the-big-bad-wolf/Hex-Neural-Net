@@ -9,14 +9,15 @@ neural_net:
   activation_function: tanh # sigmoid/tanh/relu/linear
 
 training:
-  episodes: 2950
+  episodes: 50
   optimizer: adam # adagrad/sgd/RMSPROP/adam
   epochs: 40
   learning_rate: 0.02
   RBUF_sample_size: 4000
 
 hex:
-  board_size: 5 #creates nxn board (between 3 and 10)
+  board_size: 7 #creates nxn board (between 3 and 10)
 
-M: 50 #Save interval of neural nets
+M: 5 #Save interval of neural nets
 G: 2 #Number of games to play in TOPP
+visualize: False #Whether to visualize the game or not

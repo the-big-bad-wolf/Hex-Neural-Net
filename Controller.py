@@ -12,6 +12,7 @@ class Controller:
         learning_rate: float = 0.01,
         training_epochs: int = 25,
         M: int = 10,
+        visualize: bool = False,
     ):
         self.MCTS = MCTS
         self.RLS = RLS
@@ -20,6 +21,7 @@ class Controller:
         self.learning_rate = learning_rate
         self.training_epochs = training_epochs
         self.M = M
+        self.visualize = visualize
 
         def load_training_data(file_path):
             with open(file_path, "r") as file:
@@ -44,10 +46,10 @@ class Controller:
             return features, targets
 
         # Seed RBUF with training data
-        features, targets = load_training_data("RBUF_seed/trainingdata.csv")
-        for feature, target in zip(features, targets):
-            self.RBUF.append((feature, target))
-        print("RBUF loaded with", len(self.RBUF), "samples")
+        # features, targets = load_training_data("RBUF_seed/trainingdata.csv")
+        # for feature, target in zip(features, targets):
+        #     self.RBUF.append((feature, target))
+        # print("RBUF loaded with", len(self.RBUF), "samples")
 
     def run(self, nr_episodes: int):
         self.MCTS.ANET.save_model("./models/0episodes.pth")
@@ -70,6 +72,7 @@ class Controller:
     def run_episode(self):
         while not self.MCTS.root.state.is_terminal():
             self.make_move()
+        if self.visualize:
             self.MCTS.root.state.visualize()
 
     def make_move(self):
@@ -85,7 +88,7 @@ class Controller:
                 writer = csv.writer(trainingdata)
                 writer.writerow(features + target)
 
-        # write_to_csv(features, target)
+        write_to_csv(features, target)
 
         while len(self.RBUF) >= 10000:
             self.RBUF.pop(0)

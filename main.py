@@ -39,6 +39,7 @@ board_size = int(hex_params["board_size"])
 
 M = int(parameters["M"])
 G = int(parameters["G"])
+visualize = bool(parameters["visualize"])
 
 board = Hex.empty_board(board_size)
 Hex = Hex(board, True)
@@ -68,6 +69,7 @@ controller = Controller(
     learning_rate=learning_rate,
     training_epochs=epochs,
     M=M,
+    visualize=visualize,
 )
 
 # controller.run(episodes)
