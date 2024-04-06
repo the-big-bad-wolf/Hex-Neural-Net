@@ -20,7 +20,7 @@ parameters = read_parameters_from_yaml("pivotal_parameters.yaml")
 MCTS_params = parameters["MCTS"]
 MCTS_exploration = int(MCTS_params["MCTS_exploration"])
 rollout_duration = int(MCTS_params["rollout_duration"])
-epsilon = int(MCTS_params["epsilon"])
+epsilon_decay_rate = int(MCTS_params["epsilon_decay_rate"])
 
 NN_params = parameters["neural_net"]
 hidden_layers = int(NN_params["hidden_layers"])
@@ -56,7 +56,7 @@ MCTS = MonteCarloTreeSearch(
     exploration_param=MCTS_exploration,
     root=Node(Hex, None, None),
     ANET=NN,
-    epsilon=epsilon,
+    epsilon_decay_rate=epsilon_decay_rate,
     rollout_duration=rollout_duration,
 )
 
@@ -72,7 +72,7 @@ controller = Controller(
     visualize=visualize,
 )
 
-controller.run(episodes)
+# controller.run(episodes)
 
 players: list[NNPlayer] = []
 for i in range(0, episodes + 1, M):

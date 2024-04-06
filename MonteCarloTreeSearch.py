@@ -14,12 +14,13 @@ class MonteCarloTreeSearch:
         exploration_param: float,
         root: Node,
         ANET: NeuralNet,
-        epsilon: float,
+        epsilon_decay_rate: float,
         rollout_duration: int,
     ):
         self.ANET = ANET
         self.root = root
-        self.epsilon = epsilon
+        self.epsilon = 1.0
+        self.epsilon_decay_rate = epsilon_decay_rate
         self.exploration_param = exploration_param
         self.rollout_duration = rollout_duration
         self.original_root = copy.deepcopy(self.root)

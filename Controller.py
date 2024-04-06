@@ -46,7 +46,7 @@ class Controller:
             return features, targets
 
         # Seed RBUF with training data
-        # features, targets = load_training_data("RBUF_seed/trainingdata.csv")
+        # features, targets = load_training_data("RBUF_seed/7x7-3-100.csv")
         # for feature, target in zip(features, targets):
         #     self.RBUF.append((feature, target))
         # print("RBUF loaded with", len(self.RBUF), "samples")
@@ -63,11 +63,14 @@ class Controller:
                 epochs=self.training_epochs,
                 learning_rate=self.learning_rate,
             )
-            if i == 20:
-                self.RBUF = self.RBUF[-2000:]
+            # if i == 20:
+            #     self.RBUF = self.RBUF[-1000:]
             if i % self.M == 0:
                 self.MCTS.ANET.save_model("./models/" + str(i) + "episodes.pth")
             self.MCTS.reset_root()
+            self.MCTS.epsilon = max(
+                self.MCTS.epsilon - self.MCTS.epsilon_decay_rate, 0.0
+            )
 
     def run_episode(self):
         while not self.MCTS.root.state.is_terminal():
