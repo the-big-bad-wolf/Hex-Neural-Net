@@ -4,8 +4,8 @@ import torch
 from ActorClient import ActorClient
 import numpy as np
 
-actor = NeuralNet(50, 49, 4, 99, "relu")
-actor.load_state_dict(torch.load("models/650episodes.pth"))
+actor = NeuralNet(50, 49, 4, 99, "tanh")
+actor.load_state_dict(torch.load("models/330episodes.pth"))
 
 
 class MyClient(ActorClient):

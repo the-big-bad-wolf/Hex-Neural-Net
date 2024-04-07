@@ -93,7 +93,7 @@ class Controller:
 
         write_to_csv(features, target)
 
-        while len(self.RBUF) >= 10000:
+        while len(self.RBUF) >= 100000:
             self.RBUF.pop(0)
         self.RBUF.append((features, target))
         self.MCTS.root = new_root
