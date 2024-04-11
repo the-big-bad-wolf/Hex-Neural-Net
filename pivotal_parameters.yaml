@@ -2,6 +2,7 @@ MCTS:
   MCTS_exploration: 1.5
   rollout_duration: 8.0
   epsilon_decay_rate: 0.0
+  epsilon: 1.0
 
 neural_net:
   hidden_layers: 4

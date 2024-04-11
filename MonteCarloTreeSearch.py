@@ -16,10 +16,11 @@ class MonteCarloTreeSearch:
         ANET: NeuralNet,
         epsilon_decay_rate: float,
         rollout_duration: int,
+        epsilon: float,
     ):
         self.ANET = ANET
         self.root = root
-        self.epsilon = 1.0
+        self.epsilon = epsilon
         self.epsilon_decay_rate = epsilon_decay_rate
         self.exploration_param = exploration_param
         self.rollout_duration = rollout_duration
