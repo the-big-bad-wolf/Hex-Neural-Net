@@ -1,5 +1,5 @@
-# AlphaGo
-AlphaGo knockoff
+# Hex
+This project is training neural nets to play the game of Hex through reinforcement learning and Monte Carlo tree search.
 
 ## Create virtual environment
 ```bash
